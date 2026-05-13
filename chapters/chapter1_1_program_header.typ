@@ -3,7 +3,18 @@
 #pagebreak()
 #let number = context counter("first-par").display()
 
-= Linear Executable File Layout
+= Linear Executable File Format
+
+#util.code("Linear Executable", "LE") is file format for executable code designed for 16/32-bit protected mode operating systems. Originally used by the Microsoft OS/2 2.0 operating system, served as the file format for Virtual Device Drivers (`VxD`) in early versions of Windows, and adopted by various DOS extenders. 
+Microsoft Windows 3.x and 9x used special archive format for `VxD` drivers -- `W3` and `W4` executable containers.
+
+#figure(
+  rect()[
+    #set par(leading: 0.65em)
+    #set align(left)
+    Do not use IBM's experience to determine the `LE` format correctly. The standard IBM OS/2 executable module format is a logical development of this model, which is not backward compatible!
+  ]
+)
 
 Same with the New Executable format, first bytes of file belong 
 to the Mark Zbikowski executable header. 
@@ -16,10 +27,10 @@ It has not been experimentally confirmed that the byte order affects the signatu
 however, I allow different byte order. 
 That's why, is better to check `LE` and `EL` ASCII signatures.
 
-At the next page presented file layout (see Figure #number.1) 
+At the next page presented file layout (see Listing 2) 
 
 #pagebreak()
-#align(center)[
+#figure(
   ```
   ┌─────────────────────────┐
   │ MZ Header               │────+
@@ -42,7 +53,7 @@ At the next page presented file layout (see Figure #number.1)
   │ Objects Table           │          │
   │ Objects Table           │          │
   │ ...                     │          │
-  ├─────────────────────────┤ <────+   │  
+  ├─────────────────────────┤<─────+   │  
   │ Memory Page #1          │      │<──+
   │ [Object #1]             │      │ Module pages
   ├─────────────────────────┤      │ of LE program module
@@ -60,14 +71,13 @@ At the next page presented file layout (see Figure #number.1)
   ├─────────────────────────┤
   │ Non-Resident names      │
   └─────────────────────────┘
-  ```
-  Figure #number.1 -- Linear executable file layout
-]
+  ```,
+  caption: "Linear executable file layout"
+) <le-layout>
 
 #pagebreak()
 
-Dispite the fact that `LE` format very similar with child -- `LX` format,
-*don't apply `LX` module tables to `LE` module format!*
+Despite the fact that `LE` format very similar with child -- `LX` format, don't apply `LX` module tables to `LE` module format.
 
 Since the IBM modification of linear executable module format,
 DOS 2.0 compatible program might be removed from file. 
@@ -75,7 +85,7 @@ So and `*.EXE/DLL/SYS` files will contain only `LX` program part.
 
 == Program Header
 
-At the table #number.1 presented full map of linear executable header
+At this table presented full map of linear executable header
 
 #table(
   columns: (auto, auto, auto, auto),
@@ -104,7 +114,7 @@ At the table #number.1 presented full map of linear executable header
   // Memory map
   [0x20], [4], [e32_stackobj], [Object number for stack pointer],
   [0x24], [4], [e32_esp], [Extended stack pointer (offset within object)],
-  [0x28], [4], [e32_pagesize], [Page size in bytes (typically 4096)],
+  [0x28], [4], [e32_pagesize], [Page size in bytes (default 4096)],
   [0x2C], [4], [e32_lastpagesize], [Size of last page in bytes],
   
   // Fixup section
@@ -167,19 +177,15 @@ At the table #number.1 presented full map of linear executable header
   [0xAC], [24], [e32_res3], [Reserved bytes to pad structure to 196 bytes],
 ) <le-header>
 
-Total size of `LE` header -- 196 bytes (or 0xC4). All offsets are from the start of the LE header.
+Total size of `LE` header -- 196 bytes (or 0xC4). 
+All offsets are from the start of it.
 
 Differences between `LE` and `LX` headers starts here already. 
-Field by the `0x2C` offset from the beginning of header stores resident value of 
-#util.code("size (in bytes) of last module page", "e32_lastpagesize") instead of #util.code("module pages alignment", "e32_pageshift") 
+Field by the `0x2C` offset from the beginning of header doesn't store  #util.code("module pages alignment", "e32_pageshift") 
 
 This difference is one of the key ones in the comparison. Further more. In the following sections, the layout of memory pages will be discussed, and this field will help. 
 
-== Target CPU type
-
-Some fields in the header describes module characteristics and 
-stores them as enumerated values or bits in the bit mask. 
-
+== Target CPU Type
 
 #figure(
   table(
@@ -190,10 +196,98 @@ stores them as enumerated values or bits in the bit mask.
     table.header(
       [*Value*], [*CPU Type*]
     ),
-    [0x01], [Intel 80286 or upwardly compatible],
-    [0x02], [Intel 80386 or upwardly compatible],
-    [0x03], [Intel 80486 or upwardly compatible],
-    [0x04], [Intel Pentium or upwardly compatible],
+    [`0x01`], [Intel 80286 or upwardly compatible],
+    [`0x02`], [Intel 80386 or upwardly compatible],
+    [`0x03`], [Intel 80486 or upwardly compatible],
+    [`0x04`], [Intel Pentium or upwardly compatible],
   ),
-  caption: [CPU types defined for LE format. Values are stored in the `e32_cpu` field.]
+  caption: [CPU types. Values are stored in the `e32_cpu` field.]
 ) <tbl-cpu-types>
+
+== Target OS Type
+
+#figure(
+  table(
+    columns: (auto, auto),
+    align: (center, left),
+    inset: 6pt,
+    stroke: 0.5pt,
+    table.header(
+      [*Value*], [*Description*]
+    ),
+    [`0x00`], [Any "new format" OS],
+    [`0x01`], [OS/2 2.0+],
+    [`0x02`], [Windows],
+    [`0x03`], [DOS 4.0],
+    [`0x04`], [Windows/386],
+  ),
+  caption: [OS types. Values are stored in the `e32_os` field.]
+) <tbl-os-types>
+
+== Module Flags
+
+This information bases on `exe386.h` header from MS OS/2 SDK. The module flags field `e32_mflags` divided on high and low `WORD` bitmasks.
+Empty cells at the high and low `WORD` columns mean zero value. 
+
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    align: (center, left, left),
+    inset: 6pt,
+    stroke: 0.5pt,
+    table.header(
+      [*Bit(s)*], [*Mask*], [*Description*]
+    ),
+    [0], [0x0001], [Reserved],
+    [1], [0x0002], [Reserved],
+    [2], [0x0004], [Per-Process Library Initialization],
+    [3], [0x0008], [Reserved],
+    [4], [0x0010], [No Internal Fixups for Module],
+    [5], [0x0020], [No External Fixups for Module],
+    [6-7], [0x00C0], [Reserved],
+    [8], [0x0100], [Incompatible with PM Windowing],
+    [9], [0x0200], [Compatible with PM Windowing],
+    [10-11], [0x0C00], [Uses PM Windowing API],
+    [12], [0x1000], [Reserved],
+    [13], [0x2000], [Module not Loadable],
+    [14], [0x4000], [Reserved],
+    [15], [0x8000], [Library Module],
+  ),
+  caption: [Low word of module flags.]
+) <tbl-module-flags-low>
+
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    align: (center, left, left),
+    inset: 6pt,
+    stroke: 0.5pt,
+    table.header(
+      [*Bit(s)*], [*Mask*], [*Description*]
+    ),
+    [0-14], [], [Reserved],
+    [15], [0x8000], [.DLL module],
+    [16], [0x10000], [Protected memory library module],
+    [17], [0x20000], [Device driver],
+    [?], [0x38000], [Virtual `DLD` Driver],
+    [18], [0x40000], [Reserved],
+    [19-31], [], [Reserved],
+  ),
+  caption: [High word of `e32_mflags`]
+) <tbl-module-flags-high>
+
+Then next listing demonstrates a way to define module flags
+from the given parsed header, (`e32_mflags` filled already).
+#figure(
+  ```c
+  uint32_t mflags = 0x00000212;
+  uint32_t pmcompat = mflags & 0x00000200;
+  uint32_t isdll = mflags & 0x000008000;
+
+  if (pmcompat) printf("Compatible with OS/2 PM");
+  if (isdll) printf("Library module");
+
+  ```,
+  caption: "Resolving module flags bitmask routine"
+) <le-mflags-compute>
+
