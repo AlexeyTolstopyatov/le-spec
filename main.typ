@@ -29,7 +29,7 @@
     ]
   ],
   footer: context [
-    #set par(leading: 0.6em)
+    #set par(leading: 0.65em)
     #set text(size: 12pt, fill: luma(140))
     #align(center)[
       #counter(page).display()

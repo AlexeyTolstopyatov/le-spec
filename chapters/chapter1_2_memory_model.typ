@@ -163,3 +163,39 @@ The number of entries in the resource records is defined by the Resource Table
 Count located in the linear executable header. 
 More than one resource may be contained within a 
 single object. 
+
+On the next table presented available resource types 
+for Microsoft OS/2 2.0
+#figure(
+  table(
+    columns: (auto, auto),
+    align: (center, left),
+    inset: 6pt,
+    stroke: 0.5pt,
+    table.header(
+      [*Byte*], [*Description*]
+    ),
+    [0x01], [Mouse pointer shape],
+    [0x02], [Bitmap],
+    [0x03], [Menu],
+    [0x04], [Dialog],
+    [0x05], [Strings Table],
+    [0x06], [Font Directory],
+    [0x07], [Font],
+    [0x08], [Accelerator Table],
+    [0x09], [Binary Data],
+    [0x0A], [Message Tables (embedded `*.msg` file)],
+    [0x0B], [Dialog include file name],
+    [0x0C], [Key to `vkey` tables],
+    [0x0D], [Key to UGL tables],
+    [0x0E], [Glyph to character tables],
+    [0x0F], [Screen display information],
+    [0x10], [Function key area (short form)],
+    [0x11], [Function key area (long form)],
+    [0x12], [Help table],
+    [0x13], [Help subtable],
+    [0x14], [DBCS uniq/font driver directory],
+    [0x15], [DBCS uniq/font driver]
+  ),
+  caption: [Object flags (low byte)]
+) <tbl-rsrc>
