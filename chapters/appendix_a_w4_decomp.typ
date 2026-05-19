@@ -42,7 +42,7 @@ void w4_extract(BYTE* src, BYTE* dst, WORD size) {
   count = 8;
   depth = 1;
   while (depth) {
-    // Too many conditions will be written later
+    
   }
 }
 ```

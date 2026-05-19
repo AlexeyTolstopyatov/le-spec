@@ -107,3 +107,8 @@ Notice that `w4_extract()` pulls only as many bits from
 dwMiniBuffer as it needs. After pulling a depth value, it calls `load_buffer()` to
 shift in some new bits. Then it looks for the count value, again pulling only as many
 bits as it needs, and then calling `load_buffer()` to fill up `buffer` again.
+
+==== Application
+
+The exapmle of W3 files are `VMM.386` from Windows 3.x and `WIN386.EXE` from Windows 9x.
+Also the example of file with W4 container is `VMM32.vxd`.
