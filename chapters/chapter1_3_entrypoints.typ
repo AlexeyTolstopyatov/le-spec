@@ -1,6 +1,6 @@
 #import "../template.typ" as util
 
-== Entry Points Table
+== Entry Point Table
 
 #util.term("Entry points table", "Entry Table") is very complex
 structure in the flat executable file format. 
@@ -145,7 +145,7 @@ Flags `BYTE` field has a special bitmask.
     [0x02], [Uses Shared `.DATA`],
     [0xF8], [Parameter work mask],
   ),
-  caption: [Object flags (low byte)]
+  caption: [Entry Point record Flags]
 ) <tbl-ent16-flags>
 
 === 16-bit Call Gate Entry
@@ -187,7 +187,7 @@ Same with the 16-bit entries -- 32-bit entries relate to objects with
       └───────────┬───────────┘
                 32-bit
 ```,
-  caption: [32-bit Call Gate Entry]
+  caption: [32-bit Entry]
 )
 
 The `Flg` field contains same flags presented in the @tbl-ent16-flags
@@ -226,7 +226,7 @@ Circular chains are detected by the loader and result in a load time error.
       Index of the module name
       in the [Import Modules Names] table
 ```,
-  caption: [16-bit Call Gate Entry]
+  caption: [Forwarder Entry record layout]
 )
 
 For the forwarder entries the flags definitions are different.
@@ -243,7 +243,7 @@ For the forwarder entries the flags definitions are different.
     [0x01], [Import by ordinal],
     [0xF7], [Reserved!],
   ),
-  caption: [Object flags (low byte)]
+  caption: [Forwarder Entry flags]
 ) <tbl-entfwd-flags>
 
 A maximum of 1024 `forwarders` is allowed in a chain; more than this results in a run-time time error. 
@@ -254,7 +254,7 @@ _For example, if one wanted to combine `MONCALLS`, `MOUCALLS`, and `VIOCALLS` in
 one could provide entry points for the three libraries that are forwarders pointing to the common 
 implementation._
 
-== Resident Names Table
+== Resident Name Table
 
 Resident names table contains export procedures which
 must be kept in the system memory during the module run-time.
@@ -275,7 +275,7 @@ Resident name record consists of procedure ordinal word and pascal string of the
 
 The end of the table defines by the zero length of the next Pascal String.
 
-== Non-Resident Names Table
+== Non-Resident Name Table
 
 Non-resident names are not kept in memory and are read from the file 
 when a dynamic link reference is made. 
@@ -297,3 +297,4 @@ placed in the non-resident name table.
 Same with the Resident Names table -- it just an array of records (see @name-record) with undefined count of entries.
 
 The end of the table defines by the zero length of the next Pascal String.
+

@@ -279,15 +279,20 @@ Empty cells at the high and low `WORD` columns mean zero value.
 Then next listing demonstrates a way to define module flags
 from the given parsed header, (`e32_mflags` filled already).
 #figure(
-  ```c
-  uint32_t mflags = 0x00000212;
-  uint32_t pmcompat = mflags & 0x00000200;
-  uint32_t isdll = mflags & 0x000008000;
+  ```
+  mflags := 0x00000212;
+  pmcompat := mflags & 0x00000200;
+  isdll := mflags & 0x000008000;
 
-  if (pmcompat) printf("Compatible with OS/2 PM");
-  if (isdll) printf("Library module");
+  if (pmcompat > 0) -> "Compatible with OS/2 PM";
+  if (isdll > 0) -> "Library module";
 
   ```,
   caption: "Resolving module flags bitmask routine"
 ) <le-mflags-compute>
 
+==== Remark
+
+In fact, keep it simple when defining flags. 
+There are no divisions into high and low `WORD`s in the original sources. This was done in order to divide the tables correctly. The @le-mflags-compute shows it. In other regions of this document 
+the large tables will be devided by this principle.

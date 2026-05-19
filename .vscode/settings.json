@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        ".fantomasignore": "ignore",
+        "*.zig": "zig",
+        "*.zon": "zig",
+        "LINK.C": "cpp"
+    }
+}

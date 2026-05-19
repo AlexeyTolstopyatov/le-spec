@@ -1,6 +1,6 @@
 #import "../template.typ" as util
 
-== Module Pages
+== Object Page Map
 
 Module pages concept defines the special "physical sections" of program text and data.
 At the moment of format revision `0:32` by IBM and Microsoft, module pages records are represent an array of 32-bit records.
@@ -41,7 +41,6 @@ Last module page have size which equal `e32_lastpagesize` value.
     ]
   ]
 )
-
 
 Per-page attributes or `Flags` field presented in the previous listing.
 
@@ -197,5 +196,5 @@ for Microsoft OS/2 2.0
     [0x14], [DBCS uniq/font driver directory],
     [0x15], [DBCS uniq/font driver]
   ),
-  caption: [Object flags (low byte)]
+  caption: [Resource type ID definitions]
 ) <tbl-rsrc>
